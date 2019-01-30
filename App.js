@@ -6,18 +6,13 @@ const DATA = {
   timer: 1234567,
   laps: [12345, 2345, 34567, 98765]
 };
-// const instructions = Platform.select({
-//   ios: 'Press Cmd+R to reload,\n' + 'Cmd+D or shake for dev menu',
-//   android:
-//     'Double tap R on your keyboard to reload,\n' +
-//     'Shake or press menu button for dev menu',
-// });
+
 function Timer({ interval, style }) {
   const duration = moment.duration(interval);
   const centiseconds = Math.floor(duration.milliseconds() / 10);
   return (
     <Text style={style}>
-      {duration.minutes()}:{duration.seconds()},{centiseconds}
+      {duration.minutes()}:{duration.seconds()}.{centiseconds}
     </Text>
   );
 }
@@ -131,7 +126,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     justifyContent: 'space-between',
     borderColor:'#151515',
-    borderTopWidth: 1,
+    borderTopWidth: 2,
     paddingVertical: 10,
   },
   scrollView: {
