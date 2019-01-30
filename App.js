@@ -27,26 +27,28 @@ function RoundButton({ title, color, background }) {
 }
 function Lap({ number, interval, fastest, slowest }) {
   const lapStyle = [
-    styles.lap,
+    styles.lapText,
     fastest && styles.fastest,
-    slowest && styles.slowest,
-  ]
+    slowest && styles.slowest
+  ];
   return (
-    <View style={lapStyle}>
-    {/* //links to the top */}
-      <Text style={styles.lapText}>Lap {number}</Text>
-      <Timer style={styles.lapText} interval={interval} />
+    <View style={styles.lap}>
+      {/* //links to the top */}
+      <Text style={lapStyle}>Lap {number}</Text>
+      <Timer style={lapStyle} interval={interval} />
     </View>
   );
 }
+//Calculating the data for each of the laps
 function LapsTable({ laps }) {
   const finishedLaps = laps.slice(1);
+  // will shallow copy starting at index slice(i)
   let min = Number.MAX_SAFE_INTEGER;
   let max = Number.MIN_SAFE_INTEGER;
-  if(finishedLaps.length >= 2){
+  if (finishedLaps.length >= 2) {
     finishedLaps.forEach(lap => {
-      if (lap <min) min = lap;
-      if (lap>max) max = lap;
+      if (lap < min) min = lap;
+      if (lap > max) max = lap;
     });
   }
   return (
@@ -56,7 +58,8 @@ function LapsTable({ laps }) {
           number={laps.length - index}
           key={laps.length - index}
           interval={lap}
-          slowest = {lap == min}
+          fastest={lap == min}
+          slowest={lap == max}
         />
       ))}
     </ScrollView>
@@ -116,26 +119,26 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     justifyContent: "space-between",
     marginTop: 80,
-    marginBottom:30,
+    marginBottom: 30
   },
   lapText: {
     color: "#FFFFFF",
-    fontSize:18,
+    fontSize: 18
   },
   lap: {
-    flexDirection:'row',
-    justifyContent: 'space-between',
-    borderColor:'#151515',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    borderColor: "#151515",
     borderTopWidth: 2,
-    paddingVertical: 10,
+    paddingVertical: 10
   },
   scrollView: {
-    alignSelf: 'stretch',
+    alignSelf: "stretch"
   },
   fastest: {
-    color:'#4BC05F'
+    color: "#4BC05F"
   },
-  slowest:{
-    color:'#CC3531',
+  slowest: {
+    color: "#CC3531"
   }
 });
