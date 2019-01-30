@@ -1,11 +1,13 @@
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View, ScrollView } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  ScrollView,
+  TouchableOpacity
+} from "react-native";
 import moment from "moment";
-
-const DATA = {
-  timer: 1234567,
-  laps: [12345, 2345, 34567, 98765]
-};
 
 function Timer({ interval, style }) {
   const duration = moment.duration(interval);
@@ -16,13 +18,17 @@ function Timer({ interval, style }) {
     </Text>
   );
 }
-function RoundButton({ title, color, background }) {
+function RoundButton({ title, color, background, onPress, disabled }) {
   return (
-    <View style={[styles.button, { backgroundColor: background }]}>
+    <TouchableOpacity
+      onPress={() => !onPress && onPress()}
+      activeOpacity={disabled ? 1.0 : 0.7}
+      style={[styles.button, { backgroundColor: background }]}
+    >
       <View style={[styles.buttonBorder]}>
         <Text style={[styles.buttonTitle, { color }]}>{title}</Text>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 function Lap({ number, interval, fastest, slowest }) {
@@ -69,15 +75,39 @@ function ButtonsRow({ children }) {
   return <View style={styles.buttonsRow}>{children}</View>;
 }
 export default class App extends Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      // timer: 1234567,
+      start: 0,
+      now: 100000,
+      laps: [ ],
+    };
+  }
+  start = () => {
+    const now = new Date().getTime();
+    this.setState({
+      start: now,
+      now,
+      laps:[0],
+    })
+  };
   render() {
+    const { now, start, laps } = this.state;
+    const timer = now - start;
     return (
       <View style={styles.container}>
-        <Timer interval={DATA.timer} style={styles.timer} />
+        <Timer interval={timer} style={styles.timer} />
         <ButtonsRow>
           <RoundButton title="Reset" color="#FFFFFF" background="#3D3D3D" />
-          <RoundButton title="Start" color="#50D167" background="#1B361F" />
+          <RoundButton
+            title="Start"
+            color="#50D167"
+            background="#1B361F"
+            onPress={this.start}
+          />
         </ButtonsRow>
-        <LapsTable laps={DATA.laps} />
+        <LapsTable laps={laps} />
       </View>
     );
   }
