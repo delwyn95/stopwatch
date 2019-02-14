@@ -46,7 +46,7 @@ function Lap({ number, interval, fastest, slowest }) {
     <View style={styles.lap}>
       {/* //links to the top */}
       <Text style={lapStyle}>Lap {number}</Text>
-      <Timer style={lapStyle} interval={interval} />
+      <Timer style={(lapStyle,styles.lapTimer)} interval={interval} />
     </View>
   );
 }
@@ -100,33 +100,53 @@ export default class App extends Component {
     this.timer = setInterval(() => {
       this.setState({ now: new Date().getTime() });
     }, 100);
-    //console.log("Hello!")
     //console.log(this); //cannot use console log because asynchronous
   };
+  lap = () => {
+    const timestamp = new Date().getTime()
+    const {laps,now,start} = this.state
+    const [firstLap, ... other] = laps
+    this.setState({
+      laps: [0, firstLap + now - start, ... other],
+      start: timestamp,
+      now: timestamp,
+    })
+  }
   render() {
     const { now, start, laps } = this.state;
     const timer = now - start;
     return (
       <View style={styles.container}>
-        <Timer interval={timer} style={styles.timer} />
+        <Timer interval={laps.reduce((total,curr) => total + curr,0) + timer}
+        style={styles.timer} 
+        />
+        {laps.length == 0 && (
+          <ButtonsRow>
+            <RoundButton title="Reset" color="#FFFFFF" background="#3D3D3D" />
+            <RoundButton
+              title="Start"
+              color="#50D167"
+              background="#1B361F"
+              onPress={this.start}
+            />
+          </ButtonsRow>
+          )}
+       {start > 0 && (
         <ButtonsRow>
-          <RoundButton title="Reset" color="#FFFFFF" background="#3D3D3D" />
-          <RoundButton
-            title="Start"
-            color="#50D167"
-            background="#1B361F"
-            onPress={this.start}
-          />
-        </ButtonsRow>
-        <ButtonsRow>
-          <RoundButton title="Lap" color="#FFFFFF" background="#3D3D3D" />
+          <RoundButton title="Lap" 
+          color="#FFFFFF" 
+          background="#3D3D3D"
+          onPress = {this.lap} />
           <RoundButton
             title="Stop"
             color="#E33935"
             background="#3C1715"
-            onPress={this.start}
+            onPress={this.stop}
           />
         </ButtonsRow>
+
+       )}
+        
         <LapsTable laps={laps} timer={timer} />
       </View>
     );
@@ -174,6 +194,11 @@ const styles = StyleSheet.create({
     marginBottom: 30
   },
   lapText: {
+    color: "#FFFFFF",
+    fontSize: 18,
+
+  },
+  lapTimer:{
     color: "#FFFFFF",
     fontSize: 18,
     width: 30,
